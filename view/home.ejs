@@ -120,16 +120,6 @@
                     <td>
                         <%= url.expirationDate ? new Date(url.expirationDate).toLocaleString() : 'Never' %>
                     </td>
-                    <td>
-                        <% if (url.expirationDate && new Date() > url.expirationDate) { %>
-                            <span class="expired">Expired</span>
-                        <% } else { %>
-                            <span class="active">Active</span>
-                        <% } %>
-                    </td>
-                    <td>
-                        <%= url.expirationDate ? new Date(url.expirationDate).toLocaleString() : 'Never' %>
-                    </td>
                 </tr>
             <% }); %>
         </tbody>
