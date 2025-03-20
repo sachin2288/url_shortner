@@ -4,13 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        input[type="text"], input[type="datetime-local"] {
+            padding: 8px;
+            flex: 1;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .expired {
+            color: #dc3545;
+        }
+        .active {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+        .short-url {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .short-url:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <h1>URL Shortener</h1>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error"><%= error %></div>
+    <% } %>
+
     <form action="/url" method="POST">
-        <input type="text" name="url" placeholder="https://example.com" required>
+        <div class="form-group">
+            <input type="text" name="url" placeholder="https://example.com" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="customUrl" placeholder="Custom URL (optional)">
+            <span>or</span>
+            <input type="datetime-local" name="expirationDate">
+        </div>
         <button type="submit">Generate</button>
     </form>
+
     <table>
         <thead>
             <tr>
@@ -18,15 +95,31 @@
                 <th>ShortID</th>
                 <th>Redirect</th>
                 <th>Clicks</th>
+                <th>Status</th>
+                <th>Expires</th>
             </tr>
         </thead>
         <tbody>
             <% urls.forEach((url, index) => { %>
                 <tr>
                     <td><%= index + 1 %></td>
-                    <td><%= url.shortId %></td>
+                    <td>
+                        <a href="/url/<%= url.shortId %>" class="short-url" target="_blank">
+                            <%= url.shortId %>
+                        </a>
+                    </td>
                     <td><%= url.redirectURL %></td>
                     <td><%= url.visiteHistory.length %></td>
+                    <td>
+                        <% if (url.expirationDate && new Date() > url.expirationDate) { %>
+                            <span class="expired">Expired</span>
+                        <% } else { %>
+                            <span class="active">Active</span>
+                        <% } %>
+                    </td>
+                    <td>
+                        <%= url.expirationDate ? new Date(url.expirationDate).toLocaleString() : 'Never' %>
+                    </td>
                 </tr>
             <% }); %>
         </tbody>
