@@ -10,7 +10,10 @@ const urlSchema = new mongoose.Schema({
     required: true
   },
   visiteHistory: [{timestamp: {type:Number}}],
-
+  expirationDate: {
+    type: Date,
+    default: null
+  }
 }, 
 {timestamps: true}
 );

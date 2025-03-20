@@ -25,15 +25,24 @@ app.get("/", async (req, res) => {
 
 app.get('/url/:shortId', async (req, res) => {
     const shortId = req.params.shortId;
-    const entry = await URL.findOneAndUpdate(
+    const entry = await URL.findOne({ shortId });
+    
+    if (!entry) {
+        return res.status(404).send('URL not found');
+    }
+
+    // Check if URL is expired
+    if (entry.expirationDate && new Date() > entry.expirationDate) {
+        return res.status(410).send('This URL has expired');
+    }
+
+    // Update visit history
+    await URL.findOneAndUpdate(
         { shortId },
         { $push: { visiteHistory: { timestamp: Date.now() } } }
     );
-    if (entry) {
-        res.redirect(entry.redirectURL);
-    } else {
-        res.status(404).send('URL not found');
-    }
+
+    res.redirect(entry.redirectURL);
 });
 
 app.listen(port, () => {
