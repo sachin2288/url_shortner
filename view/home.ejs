@@ -4,52 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="datetime-local"] {
-            padding: 8px;
-            margin-right: 10px;
-        }
-        button {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f5f5f5;
-        }
-        .expired {
-            color: #dc3545;
-        }
-        .active {
-            color: #28a745;
-        }
-    </style>
 </head>
 <body>
     <h1>URL Shortener</h1>
     <form action="/url" method="POST">
         <input type="text" name="url" placeholder="https://example.com" required>
-        <input type="datetime-local" name="expirationDate">
         <button type="submit">Generate</button>
     </form>
     <table>
@@ -59,8 +18,6 @@
                 <th>ShortID</th>
                 <th>Redirect</th>
                 <th>Clicks</th>
-                <th>Status</th>
-                <th>Expires</th>
             </tr>
         </thead>
         <tbody>
@@ -70,16 +27,6 @@
                     <td><%= url.shortId %></td>
                     <td><%= url.redirectURL %></td>
                     <td><%= url.visiteHistory.length %></td>
-                    <td>
-                        <% if (url.expirationDate && new Date() > url.expirationDate) { %>
-                            <span class="expired">Expired</span>
-                        <% } else { %>
-                            <span class="active">Active</span>
-                        <% } %>
-                    </td>
-                    <td>
-                        <%= url.expirationDate ? new Date(url.expirationDate).toLocaleString() : 'Never' %>
-                    </td>
                 </tr>
             <% }); %>
         </tbody>
